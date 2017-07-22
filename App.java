@@ -25,9 +25,6 @@ public class App
             listaSocket.add(socket);
             listaSocketUsername.add("utentenoninserito");
             indicesocket++;
-            printWriter =new PrintWriter(socket.getOutputStream(),true);
-            printWriter.println("Inserire Username");
-            printWriter.flush();
             new Thread(new ViewMex(socket,indicesocket)).start();
 
         }

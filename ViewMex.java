@@ -40,45 +40,24 @@ public class ViewMex implements Runnable {
         App.listaSocketUsername.set(indicesocket,message);
         username=message;
         var = 1;
-        PrintWriter printWriter;
-        printWriter = new PrintWriter(socket.getOutputStream(), true);
-        printWriter.println("Inserisci messaggio da mandare");
-        printWriter.flush();
-
     }
 
     public void inviaMex(String message) throws IOException {
 
         PrintWriter printWriter;
         printWriter = new PrintWriter(socket.getOutputStream(), true);
-        printWriter.println("scegli a chi inviare il messaggio");
-        printWriter.flush();
         int indice=sceltanome();
+
         if(indice!=-1) {
             Socket ricevente = App.listaSocket.get(indice);
             printWriter = new PrintWriter(ricevente.getOutputStream(), true);
-            printWriter.println(username+ " scrive " + message);
+            printWriter.println(username+ " scrive " + message + '\n');
             printWriter.flush();
-        }
-        printWriter = new PrintWriter(socket.getOutputStream(), true);
-        printWriter.println("Inserisci messaggio da mandare");
-        printWriter.flush();
-
-    }
-    public String scegliere() throws IOException
-    {
-        String scelta;
-        while (true)
+        }else
         {
-
-                if (buffer.ready())
-                {
-                    scelta = buffer.readLine();
-                    System.out.println(scelta);
-                    return scelta;
-
-                }
-
+            printWriter = new PrintWriter(socket.getOutputStream(), true);
+            printWriter.println("Impossibile mandare messaggio" );
+            printWriter.flush();
         }
 
     }
@@ -100,25 +79,10 @@ public class ViewMex implements Runnable {
                     }
                 }
                 System.out.println("indice è" + indice);
-                if(indice!=-1)
-                    return indice;
-                else {
-                    PrintWriter printWriter;
-                    printWriter = new PrintWriter(socket.getOutputStream(), true);
-                    printWriter.println("Il contatto non è presente tra gli utenti connessi,digita 1 per cancellare messaggio");
-                    printWriter.flush();
-                    scelta=Integer.parseInt(scegliere());
-                    if(scelta==1)
-                        return -1;
-                    else
-                    {
-                        printWriter = new PrintWriter(socket.getOutputStream(), true);
-                        printWriter.println("resinserire utente destinatario");
-                        printWriter.flush();
-                    }
+                 return indice;
                 }
+
             }
         }
 
-    }
 }
