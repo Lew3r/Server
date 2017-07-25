@@ -36,25 +36,24 @@ public class ViewMex implements Runnable {
                         }
                     }
                 }
-                else
-                {   if(primo!=1) {
+                else {
+                    if (primo != 1) {
                         primomessaggio = tuttiUsername;
-                    try {
-                        inviaMex(primomessaggio);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        try {
+                            inviaMex(primomessaggio);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            if (buffer.ready())
+                                inviaMex(buffer.readLine());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
-                    else
-                    try {
-                        if (buffer.ready())
-                            inviaMex(buffer.readLine());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
 
         }
     }
@@ -68,32 +67,44 @@ public class ViewMex implements Runnable {
     }
 
     public void inviaMex(String message) throws IOException {
-        if(primo!=0) {
-            PrintWriter printWriter;
-            printWriter = new PrintWriter(socket.getOutputStream(), true);
-            int indice = sceltanome();
+        System.out.println("ronaldo"+message);
+        if(message.equals("$richiestausername$"))
+        {
 
-            if (indice != -1) {
-                Socket ricevente = App.listaSocket.get(indice);
-                printWriter = new PrintWriter(ricevente.getOutputStream(), true);
-                printWriter.println(message + "%" + username + "$" + tuttiUsername);
-                printWriter.flush();
+            System.out.println("ronaldo");
+            inviausername("$");
 
-            } else {
+        }
+        else {
+            if (primo != 0) {
+                PrintWriter printWriter;
                 printWriter = new PrintWriter(socket.getOutputStream(), true);
-                printWriter.println("Impossibile mandare messaggio" + "%" + "nessun unsername" + "$" + tuttiUsername);
-                printWriter.flush();
+                int indice = sceltanome();
+
+                if (indice != -1) {
+                    Socket ricevente = App.listaSocket.get(indice);
+                    printWriter = new PrintWriter(ricevente.getOutputStream(), true);
+                    printWriter.println(message + "%" + username + "$" + tuttiUsername);
+                    printWriter.flush();
+
+                } else {
+                    printWriter = new PrintWriter(socket.getOutputStream(), true);
+                    printWriter.println("Impossibile mandare messaggio" + "%" + "nessun unsername" + "$" + tuttiUsername);
+                    printWriter.flush();
+
+                }
+            } else {
+                inviausername("");
 
             }
         }
-        else
-        {
-            PrintWriter printWriter;
-            printWriter = new PrintWriter(socket.getOutputStream(), true);
-            printWriter.println("£"+tuttiUsername);
-            primo=1;
-
-        }
+    }
+    public void inviausername(String controllo) throws IOException {
+        PrintWriter printWriter;
+        printWriter = new PrintWriter(socket.getOutputStream(), true);
+        tuttiUsername=vediarrayList(App.listaSocketUsername);
+        printWriter.println("£"+controllo + tuttiUsername);
+        primo = 1;
     }
     public String vediarrayList(ArrayList<String> listaSocketUsername)
     {
