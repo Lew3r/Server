@@ -67,11 +67,9 @@ public class ViewMex implements Runnable {
     }
 
     public void inviaMex(String message) throws IOException {
-        System.out.println("ronaldo"+message);
+
         if(message.equals("$richiestausername$"))
         {
-
-            System.out.println("ronaldo");
             inviausername("$");
 
         }
@@ -126,7 +124,6 @@ public class ViewMex implements Runnable {
                 for (int j=0; j<App.listaSocketUsername.size();j++)
                 {
                     if (name.equals(App.listaSocketUsername.get(j))) {
-                        System.out.println("nome" + App.listaSocketUsername.get(j));
                         indice=j;
                     }
                 }
