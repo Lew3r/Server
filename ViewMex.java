@@ -13,13 +13,12 @@ public class ViewMex implements Runnable {
     String username;
     String tuttiUsername;
     int var = 0;
-    int indicesocket;
     String primomessaggio;
     int primo=0;
-    public ViewMex(Socket socket, int indicesocket) throws IOException {
+    public ViewMex(Socket socket) throws IOException {
         this.socket = socket;
         buffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.indicesocket=indicesocket;
+
     }
 
     public void run() {
@@ -60,7 +59,7 @@ public class ViewMex implements Runnable {
 
     public void username(String message) throws IOException {
 
-        App.listaSocketUsername.set(indicesocket,message);
+        App.listaSocketUsername.set(App.returnindicesocket(),message);
         tuttiUsername=vediarrayList(App.listaSocketUsername);
         username=message;
         var = 1;
@@ -68,41 +67,63 @@ public class ViewMex implements Runnable {
 
     public void inviaMex(String message) throws IOException {
 
-        if(message.equals("$richiestausername$"))
-        {
-            inviausername("$");
+        if (message.indexOf("REMOVECONNESSIONE%")>-1) {
+            String utente= message.substring(message.indexOf("%")+1);
+            App.cercaConnDelete(utente);
+            inviausername("&&&&",utente);
 
-        }
-        else {
-            if (primo != 0) {
-                PrintWriter printWriter;
-                printWriter = new PrintWriter(socket.getOutputStream(), true);
-                int indice = sceltanome();
 
-                if (indice != -1) {
-                    Socket ricevente = App.listaSocket.get(indice);
-                    printWriter = new PrintWriter(ricevente.getOutputStream(), true);
-                    printWriter.println(message + "%" + username + "$" + tuttiUsername);
-                    printWriter.flush();
+        } else {
+            if (message.equals("$richiestausername$")) {
+                inviausername("$","");
 
-                } else {
+            }
+            else {
+                if (primo != 0) {
+                    PrintWriter printWriter;
                     printWriter = new PrintWriter(socket.getOutputStream(), true);
-                    printWriter.println("Impossibile mandare messaggio" + "%" + "nessun unsername" + "$" + tuttiUsername);
-                    printWriter.flush();
+                    int indice = sceltanome();
+
+                    if (indice != -1) {
+                        Socket ricevente = App.listaSocket.get(indice);
+                        printWriter = new PrintWriter(ricevente.getOutputStream(), true);
+                        printWriter.println(message + "%" + username + "$" + tuttiUsername);
+                        printWriter.flush();
+
+                    } else {
+                        printWriter = new PrintWriter(socket.getOutputStream(), true);
+                        printWriter.println("Impossibile mandare messaggio" + "%" + "nessun unsername" + "$" + tuttiUsername);
+                        printWriter.flush();
+
+                    }
+                } else {
+                    inviausername("","");
 
                 }
-            } else {
-                inviausername("");
-
             }
         }
     }
-    public void inviausername(String controllo) throws IOException {
-        PrintWriter printWriter;
-        printWriter = new PrintWriter(socket.getOutputStream(), true);
-        tuttiUsername=vediarrayList(App.listaSocketUsername);
-        printWriter.println("£"+controllo + tuttiUsername);
-        primo = 1;
+    public void inviausername(String controllo,String controllo2) throws IOException {
+        if(controllo.equals("&&&&"))
+        {
+            for(int i=0;i<App.returnListaSocket().size();i++)
+            {
+                PrintWriter printWriter;
+                printWriter = new PrintWriter(App.returnListaSocket().get(i).getOutputStream(), true);
+                tuttiUsername = vediarrayList(App.listaSocketUsername);
+                printWriter.println("ç"+controllo2+"£" + controllo + tuttiUsername);
+                primo = 1;
+            }
+
+        }
+        else
+        {
+            PrintWriter printWriter;
+            printWriter = new PrintWriter(socket.getOutputStream(), true);
+            tuttiUsername = vediarrayList(App.listaSocketUsername);
+            printWriter.println("£" + controllo + tuttiUsername);
+            primo = 1;
+        }
     }
     public String vediarrayList(ArrayList<String> listaSocketUsername)
     {
