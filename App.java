@@ -1,5 +1,6 @@
 package Mex;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,17 +33,17 @@ public class App
     return indicesocket;
    }
 
-        public static void cercaConnDelete(String utente)
-        {
+        public static void cercaConnDelete(String utente,Socket socket) throws IOException {
             for(int i=0;i< listaSocketUsername.size();i++) {
                 System.out.println("contenuto" + listaSocketUsername.get(i));
             }
-
+            utente=utente.substring(utente.indexOf('%')+1);
             for(int i=0;i< listaSocketUsername.size();i++) {
                 if(listaSocketUsername.get(i).equalsIgnoreCase(utente))
                 {
                     listaSocketUsername.remove(i);
                     listaSocket.remove(i);
+                    socket.close();
                     System.out.println("si è appena disconnesso" + utente);
                     indicesocket--;
                     break;
